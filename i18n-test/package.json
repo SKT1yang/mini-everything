@@ -7,16 +7,22 @@
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
     "preview": "vite preview",
-    "lint": "eslint",
+    "lint": "eslint .",
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
-    "eslint-plugin-i18n-wrap": "^0.0.6",
-    "vue": "^3.5.12"
+    "@typescript-eslint/parser": "^8.12.2",
+    "@voerkai18n/runtime": "^2.1.10",
+    "ant-design-vue": "^4.2.5",
+    "eslint-plugin-i18n-wrap": "^0.0.9",
+    "vue": "^3.5.12",
+    "vue-eslint-parser": "^9.4.3",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.13.0",
     "@stylistic/eslint-plugin": "^2.10.0",
+    "@types/node": "^22.8.7",
     "@vitejs/plugin-vue": "^5.1.4",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",

@@ -5,6 +5,8 @@ import tseslint from "typescript-eslint";
 import eslintPluginVue from "eslint-plugin-vue";
 import i18nWrap from "eslint-plugin-i18n-wrap";
 import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import vueEslintParser from "vue-eslint-parser";
+import tsEslintParser from "@typescript-eslint/parser";
 
 export default tseslint.config(
   {
@@ -21,11 +23,20 @@ export default tseslint.config(
   {
     files: ["**/*.{js,mjs,cjs,ts,tsx,vue}"],
     languageOptions: {
-      ecmaVersion: "latest",
+      parser: vueEslintParser,
+      parserOptions: {
+        parser: tsEslintParser,
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+        ecmaVersion: 2020,
+      },
     },
     plugins: { i18n: i18nWrap },
     rules: {
-      "i18n/wrap-i18n-function": "error",
+      "i18n/wrap-i18n-function": "warn",
+      "i18n/import-i18n-function": "warn",
     },
   },
 

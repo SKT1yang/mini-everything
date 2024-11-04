@@ -1,29 +1,22 @@
-<script setup lang="ts">
-import HelloWorld from "./components/HelloWorld.vue";
-const name = t("中文");
-</script>
+<!--
+ * @name: 根组件
+ * @description: Do not edit
+-->
 
 <template>
-  <div :name="t('中文')">
-    <a href="https://vite.dev" target="_blank">{{ t(" 中文 ") }}</a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <config-provider :locale="locale">
+    <router-view />
+    <FloatButtonGroup shape="circle">
+      <FloatButton @click="handleSwitchTranlate()">
+        <template #icon>
+          <i class="i-base-translate"></i>
+        </template>
+      </FloatButton>
+    </FloatButtonGroup>
+  </config-provider>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
-</style>
+<script lang="ts" setup>
+import { ConfigProvider, FloatButtonGroup, FloatButton } from "ant-design-vue";
+import { locale, handleSwitchTranlate } from "@/languages/useLanguage";
+</script>

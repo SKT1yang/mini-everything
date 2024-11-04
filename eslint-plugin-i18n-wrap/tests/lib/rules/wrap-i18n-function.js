@@ -108,8 +108,8 @@ ruleTester.run("wrap-i18n-function", rule, {
     },
     {
       filename: 'test.vue',
-      code: "<template><div>文本1{{`中文`}}文本2</div</template>",
-      output: "<template><div>{{t('文本1')}}{{t('中文')}}{{t('文本2')}}</div</template>",
+      code: "<template><div>文本1{{`中文`}}文本2</div></template>",
+      output: "<template><div>{{t('文本1')}}{{t('中文')}}{{t('文本2')}}</div></template>",
       errors: [{ messageId: "unwrap" }, { messageId: "unwrap" }, { messageId: "unwrap" }],
     },
     /* 属性 */

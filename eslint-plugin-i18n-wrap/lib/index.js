@@ -16,13 +16,6 @@ const requireIndex = require("requireindex");
 
 // 直接合并成一个module.exports
 module.exports = {
-  configs: {
-    // add your configs here
-    base: require('./configs/base'),
-  },
   rules: requireIndex(__dirname + "/rules"),
-  processors: {
-    // add your processors here
-  }
 }
 

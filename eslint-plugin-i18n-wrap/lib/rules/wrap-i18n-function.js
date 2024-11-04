@@ -3,7 +3,6 @@
  * @author yangguodong
  */
 const utils = require("../utils")
-const path = require("path")
 
 "use strict";
 
@@ -14,7 +13,7 @@ const path = require("path")
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
-    type: "problem", // `problem`, `suggestion`, or `layout`
+    type: "suggestion", // `problem`, `suggestion`, or `layout`
     docs: {
       description: "存在未被国际化包裹的中文",
       recommended: false,
@@ -31,15 +30,6 @@ module.exports = {
   create(context) {
 
     // variables should be defined here
-
-    // 获取当前文件名、文件路径信息
-    const filename = context.getFilename()
-    const cwd = context.getCwd && context.getCwd()
-    // console.log('filename:', filename)
-    // console.log('cwd:', cwd)
-
-    let needImportFunction = false
-    let functionImported = false
 
     //----------------------------------------------------------------------
     // Helpers
@@ -93,9 +83,6 @@ module.exports = {
           break
         default:
           result = false
-      }
-      if (result === true) {
-        needImportFunction = true
       }
       return result
     }
@@ -161,12 +148,6 @@ module.exports = {
                 return fixer.replaceText(node, `{t('${node.value}')}`)
               }
             });
-          }
-        },
-        ImportSpecifier(node) {
-          // console.log('****ImportSpecifier****\n', node.type, '\n', node.imported, '\n')
-          if (node.local.name === 't') {
-            functionImported = true
           }
         },
 

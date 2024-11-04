@@ -44,6 +44,35 @@ function hasChinese(str) {
   return /[\u4e00-\u9fa5]/.test(str);
 }
 
+/**
+ * @template T
+ * @param {T} visitor
+ * @param {...(TemplateListener | RuleListener | NodeListener)} visitors
+ * @returns {T}
+ */
+function compositingVisitors(visitor, ...visitors) {
+  for (const v of visitors) {
+    for (const key in v) {
+      // @ts-expect-error
+      if (visitor[key]) {
+        // @ts-expect-error
+        const o = visitor[key]
+        // @ts-expect-error
+        visitor[key] = (...args) => {
+          o(...args)
+          // @ts-expect-error
+          v[key](...args)
+        }
+      } else {
+        // @ts-expect-error
+        visitor[key] = v[key]
+      }
+    }
+  }
+  return visitor
+}
+
+
 module.exports = {
   /**
    * Register the given visitor to parser services.
@@ -57,5 +86,6 @@ module.exports = {
    * @returns {RuleListener} The merged visitor.
    */
   defineTemplateBodyVisitor,
-  hasChinese
+  hasChinese,
+  compositingVisitors
 }
