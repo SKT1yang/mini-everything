@@ -2,6 +2,9 @@
  * @fileoverview 存在未被国际化包裹的中文
  * @author yangguodong
  */
+const utils = require("../utils")
+const path = require("path")
+
 "use strict";
 
 //------------------------------------------------------------------------------
@@ -21,110 +24,201 @@ module.exports = {
     schema: [], // Add a schema if the rule has options
     messages: {
       unwrap: "存在未被国际化包裹的中文",
+      // unimport: "未引入国际化函数"
     }, // Add messageId and message
   },
 
   create(context) {
+
     // variables should be defined here
+
+    // 获取当前文件名、文件路径信息
+    const filename = context.getFilename()
+    const cwd = context.getCwd && context.getCwd()
+    // console.log('filename:', filename)
+    // console.log('cwd:', cwd)
+
+    let needImportFunction = false
+    let functionImported = false
 
     //----------------------------------------------------------------------
     // Helpers
     //----------------------------------------------------------------------
 
     /**
-     * 函数判断一个字符串是否包含中文字符
-     * @param {string} str 
-     * @returns 
+     * 判断节点是否需要国际化包裹
+     * @param {Literal | TemplateLiteral | VText | VExpressionContainer | VLiteral | VAttribute | VDirective | JSXText} node
+     * @returns
      */
-    function hasChinese(str) {
-      return /[\u4e00-\u9fa5]/.test(str);
-    }
-
     function isUnwrap(node) {
+      let result = false
       switch (node.type) {
         case "Literal":
           {
             const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.name !== "t"
-            return typeof node.value === "string" && hasChinese(node.value) && (node.parent.type !== "CallExpression" || not_t_function)
+            result = typeof node.value === "string" && utils.hasChinese(node.value) && (node.parent.type !== "CallExpression" || not_t_function)
+            break
           }
+
         case "TemplateLiteral":
-          // 遍历TemplateLiteral的elements，判断是否有中文字符
           {
-            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.name !== "t"
-            return node.quasis.some(quasi => hasChinese(quasi.value.raw)) && (node.parent.type !== "CallExpression" || not_t_function)
+            result = node.quasis.some(quasi => utils.hasChinese(quasi.value.raw))
+            break
           }
 
+        case "VLiteral":
+          {
+            result = typeof node.value === "string" && utils.hasChinese(node.value)
+            break
+          }
+
+        case "VText":
+          {
+            result = typeof node.value === "string" && utils.hasChinese(node.value)
+
+          }
+          break
+        case "VAttribute":
+          {
+            // 静态属性
+            if (node.key.type === 'VIdentifier' && node.value && node.value.type === 'VLiteral') {
+              return typeof node.value.value === "string" && utils.hasChinese(node.value.value)
+            }
+            result = false
+
+          }
+          break
+        case "JSXText":
+          result = typeof node.value === "string" && utils.hasChinese(node.value)
+          break
         default:
-          return false
+          result = false
       }
-
-
+      if (result === true) {
+        needImportFunction = true
+      }
+      return result
     }
-    // any helper functions should go here or else delete this section
+
+    /**
+     * 获取es节点监听器
+     * @description 包括jsx节点
+     * @returns {TemplateListener}
+     */
+    function getEsNodeListener() {
+      return {
+        // 字符串字面量
+        Literal(node) {
+          // console.log('****Literal****\n', node.type, '\n', node.value, '\n')
+          if (isUnwrap(node)) {
+            context.report({
+              node,
+              messageId: "unwrap",
+              fix(fixer) {
+                if (node.parent.type === 'JSXAttribute') {
+                  return fixer.replaceText(node, `{t('${node.value}')}`)
+                } else {
+                  return fixer.replaceText(node, `t('${node.value}')`)
+                }
+              }
+            });
+          }
+        },
+        // 模板字符串字面量
+        TemplateLiteral(node) {
+          // console.log('****TemplateLiteral****\n', node.type, '\n', node.quasis, '\n')
+          if (isUnwrap(node)) {
+            context.report({
+              node,
+              messageId: "unwrap",
+              fix(fixer) {
+                let text = node.quasis.map((quasi) => {
+                  return quasi.value.raw
+                }).join('{}')
+                // 将模版字符串中表达式原文 提取出来
+                let expressions = node.expressions.map(exp => {
+                  let sourceCode = context.getSourceCode()
+                  return sourceCode.text.slice(exp.range[0], exp.range[1])
+                })
+                if (expressions.length > 0) {
+                  // 考虑有expression 变量的模板字符串
+                  return fixer.replaceText(node, `t('${text}', ${expressions.join(',')})`)
+                } else {
+                  return fixer.replaceText(node, `t('${text}')`)
+                }
+              }
+            });
+          }
+        },
+
+        JSXText(node) {
+          // console.log('****JSXText****\n', node.type, '\n', node.value, '\n')
+          if (isUnwrap(node)) {
+            context.report({
+              node,
+              messageId: "unwrap",
+              fix(fixer) {
+                return fixer.replaceText(node, `{t('${node.value}')}`)
+              }
+            });
+          }
+        },
+        ImportSpecifier(node) {
+          // console.log('****ImportSpecifier****\n', node.type, '\n', node.imported, '\n')
+          if (node.local.name === 't') {
+            functionImported = true
+          }
+        },
+
+      }
+    }
 
     //----------------------------------------------------------------------
     // Public
     //----------------------------------------------------------------------
 
-    return {
-      // visitor functions for different types of nodes
-
-      // 字符串字面量
-      Literal(node) {
-        // 已经被 函数名为t 包裹的字符串字面量，不需要处理
-        if (node.parent.type === "CallExpression" && node.parent.callee.name === "t") {
-          return;
-        }
-        // 父节点为模板字面量，不需要处理
-        if (node.parent.type === "TemplateLiteral") {
-          return;
-        }
-        if (typeof node.value === "string" && hasChinese(node.value) && isUnwrap(node)) {
-          context.report({
-            node,
-            messageId: "unwrap",
-            fix(fixer) {
-              return fixer.replaceText(node, `t('${node.value}')`)
-            }
-          });
-        }
-      },
-      // 模板字符串字面量
-      TemplateLiteral(node) {
-        // 已经被 函数名为t 包裹的字符串字面量，不需要处理
-        if (node.parent.type === "CallExpression" && node.parent.callee.name === "t") {
-          return;
-        }
+    const vueRuleListener = utils.defineTemplateBodyVisitor(context, {
+      VText(node) {
+        // console.log('****VText****\n', node.type, '\n', node.value, '\n')
         if (isUnwrap(node)) {
           context.report({
             node,
             messageId: "unwrap",
             fix(fixer) {
-              let text = ''
-              let expressionIndex = 0
-              node.quasis.forEach((quote) => {
-                if (quote.value.raw) {
-                  text += quote.value.raw
-                }
-                if (node.expressions.length && expressionIndex < node.expressions.length) {
-                  const item = node.expressions[expressionIndex]
-                  switch (item.type) {
-                    case "Identifier":
-                      text += "${" + item.name + "}"
-                      break;
-                    case "Literal":
-                      text += "${" + item.raw + "}"
-                      break;
-                  }
-                  expressionIndex++
-                }
-              })
-              // 考虑有expression 变量的模板字符串
-              return fixer.replaceText(node, `t(\`${text}\`)`)
+              return fixer.replaceText(node, `{{t('${node.value}')}}`)
             }
           });
         }
-      }
+      },
+
+      VAttribute(node) {
+        // console.log('sourceCode', context?.sourceCode?.text)
+        // console.log('****VAttribute****\n', node, '\n')
+        if (node === null) {
+          return;
+        }
+
+        if (isUnwrap(node) && node.key.type === 'VIdentifier' && node.value && node.value.type === 'VLiteral') {
+          context.report({
+            node,
+            messageId: "unwrap",
+            fix(fixer) {
+              if (node.value && node.value.type === 'VLiteral') {
+                return fixer.replaceText(node, `:${node.key.name}="t('${node.value.value}')"`)
+              } else {
+                return null
+              }
+            }
+          });
+        }
+      },
+      ...getEsNodeListener()
+    })
+
+    return {
+      // visitor functions for different types of nodes
+      ...vueRuleListener,
+      ...getEsNodeListener()
     };
   },
 };

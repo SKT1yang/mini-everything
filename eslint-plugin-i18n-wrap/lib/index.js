@@ -14,14 +14,15 @@ const requireIndex = require("requireindex");
 // Plugin Definition
 //------------------------------------------------------------------------------
 
-
-// import all rules in lib/rules
-module.exports.rules = requireIndex(__dirname + "/rules");
-
-
-
-// import processors
-module.exports.processors = {
-  // add your processors here
-};
+// 直接合并成一个module.exports
+module.exports = {
+  configs: {
+    // add your configs here
+    base: require('./configs/base'),
+  },
+  rules: requireIndex(__dirname + "/rules"),
+  processors: {
+    // add your processors here
+  }
+}
 
