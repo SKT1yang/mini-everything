@@ -1,36 +1,69 @@
-<p align="center"><img width="143px" height="130px" src="./assets/eslint-plugin-vue-i18n.svg" alt="ESLint plugin for Vue I18n logo"></p>
+# eslint-plugin-i18n-wrap
 
-<h1 align="center">@intlify/eslint-plugin-vue-i18n</h1>
-<p align="center">
-  <a href="https://github.com/intlify/eslint-plugin-vue-i18n/actions?query=workflow%3ATest"><img src="https://github.com/intlify/eslint-plugin-vue-i18n/workflows/Test/badge.svg?branch=master" alt="Test Status"></a>
-</p>
-<p align="center">
-  <a href="https://www.npmjs.com/package/@intlify/eslint-plugin-vue-i18n"><img src="https://img.shields.io/npm/v/@intlify/eslint-plugin-vue-i18n.svg" alt="NPM"></a>
-</p>
-<p align="center">ESLint plugin for Vue I18n</p>
+国际化包裹翻译函数
 
-<h2 align="center">Supporting Intlify Project</h2>
+## Installation
 
-Intlify Project is an open source project that is included Vue I18n and i18n tooling and libraries with its ongoing development made possible entirely by the support of Sponsors. If you would like to become a sponsor, please consider:
+You'll first need to install [ESLint](https://eslint.org/):
 
-- [Become a Sponsor on GitHub](https://github.com/sponsors/ota-meshi)
+```sh
+npm i eslint --save-dev
+```
 
-## 📔 Documentation
+Next, install `eslint-plugin-i18n-wrap`:
 
-See [here](https://eslint-plugin-vue-i18n.intlify.dev)
+```sh
+npm install eslint-plugin-i18n-wrap --save-dev
+```
 
-## 📜 Changelog
+## Usage
 
-Details changes for each release are documented in the [CHANGELOG.md](https://github.com/intlify/eslint-plugin-vue-i18n/blob/master/CHANGELOG.md).
+In your [configuration file](https://eslint.org/docs/latest/use/configure/configuration-files#configuration-file), import the plugin `eslint-plugin-i18n-wrap` and add `i18n-wrap` to the `plugins` key:
 
-## ❗ Issues
+```js
+import i18n-wrap from "eslint-plugin-i18n-wrap";
 
-Please make sure to read the [Issue Reporting Checklist](https://github.com/intlify/eslint-plugin-vue-i18n/blob/master/CONTRIBUTING.md#issue-reporting-guidelines) before opening an issue. Issues not conforming to the guidelines may be closed immediately.
+export default [
+    {
+        plugins: {
+            i18n-wrap
+        }
+    }
+];
+```
 
-## 💪 Contribution
 
-Please make sure to read the [Contributing Guide](https://github.com/intlify/eslint-plugin-vue-i18n/blob/master/.github/CONTRIBUTING.md) before making a pull request.
+Then configure the rules you want to use under the `rules` key.
 
-## ©️ License
+```js
+import i18n-wrap from "eslint-plugin-i18n-wrap";
 
-[MIT](http://opensource.org/licenses/MIT)
+export default [
+    {
+        plugins: {
+            i18n-wrap
+        },
+        rules: {
+            "i18n-wrap/rule-name": "warn"
+        }
+    }
+];
+```
+
+
+
+## Configurations
+
+<!-- begin auto-generated configs list -->
+TODO: Run eslint-doc-generator to generate the configs list (or delete this section if no configs are offered).
+<!-- end auto-generated configs list -->
+
+
+
+## Rules
+
+<!-- begin auto-generated rules list -->
+TODO: Run eslint-doc-generator to generate the rules list.
+<!-- end auto-generated rules list -->
+
+
