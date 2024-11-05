@@ -4,13 +4,10 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 import eslintPluginVue from 'eslint-plugin-vue';
 import i18nWrap from 'eslint-plugin-i18n-wrap';
-import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
-import vueEslintParser from 'vue-eslint-parser';
-import tsEslintParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   {
-    ignores: ['node_modules', 'dist', 'public'],
+    ignores: ['node_modules', 'dist', 'public', "**/languages/"],
   },
 
   /** js推荐配置 */
@@ -20,25 +17,7 @@ export default tseslint.config(
   /** vue推荐配置 */
   ...eslintPluginVue.configs['flat/recommended'],
 
-  {
-    files: ['**/*.{js,mjs,cjs,ts,tsx,vue}'],
-    languageOptions: {
-      parser: vueEslintParser,
-      parserOptions: {
-        parser: tsEslintParser,
-        sourceType: 'module',
-        ecmaFeatures: {
-          jsx: true,
-        },
-        ecmaVersion: 2020,
-      },
-    },
-    plugins: { i18n: i18nWrap },
-    rules: {
-      'i18n/wrap-i18n-function': 'warn',
-      'i18n/import-i18n-function': 'warn',
-    },
-  },
+  i18nWrap.configs.recommended,
 
   /**
    * javascript 规则
@@ -57,9 +36,6 @@ export default tseslint.config(
     languageOptions: {
       globals: {
         ...globals.browser,
-
-        /** 追加一些其他自定义全局规则 */
-        wx: true,
       },
     },
   },
@@ -90,19 +66,4 @@ export default tseslint.config(
       ],
     },
   },
-
-  /**
-   * typescript 规则
-   */
-  {
-    files: ['**/*.{ts,tsx,vue}'],
-    rules: {},
-  },
-
-  /**
-   * prettier 配置
-   * 会合并根目录下的.prettier.config.js 文件
-   * @see https://prettier.io/docs/en/options
-   */
-  eslintPluginPrettierRecommended,
 );

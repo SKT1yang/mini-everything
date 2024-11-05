@@ -1,7 +1,8 @@
 import type { Linter } from 'eslint'
 
-declare const vue: {
+declare const plugin: {
   rules: Record<string, any>
+  configs: Record<string, Linter.FlatConfig>
 }
 
-export = vue
+export = plugin

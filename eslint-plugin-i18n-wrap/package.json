@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-i18n-wrap",
-  "version": "0.0.11",
+  "version": "0.0.19",
   "description": "国际化包裹翻译函数",
   "keywords": [
     "eslint",
@@ -10,6 +10,7 @@
   "author": "yangguodong",
   "main": "./lib/index.js",
   "exports": "./lib/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
     "lib"
   ],

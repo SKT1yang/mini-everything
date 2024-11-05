@@ -14,7 +14,7 @@
     "@typescript-eslint/parser": "^8.12.2",
     "@voerkai18n/runtime": "^2.1.10",
     "ant-design-vue": "^4.2.5",
-    "eslint-plugin-i18n-wrap": "^0.0.11",
+    "eslint-plugin-i18n-wrap": "^0.0.19",
     "vue": "^3.5.12",
     "vue-eslint-parser": "^9.4.3",
     "vue-router": "^4.4.5"
@@ -25,8 +25,6 @@
     "@types/node": "^22.8.7",
     "@vitejs/plugin-vue": "^5.1.4",
     "eslint": "^9.13.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-vue": "^9.30.0",
     "globals": "^15.11.0",
     "typescript": "~5.6.2",

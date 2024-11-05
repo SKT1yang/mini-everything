@@ -15,7 +15,7 @@ const utils = require("../utils")
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
-    type: "suggestion", // `problem`, `suggestion`, or `layout`
+    type: "problem", // `problem`, `suggestion`, or `layout`
     docs: {
       description: "存在未被国际化包裹的中文",
       recommended: false,
@@ -157,7 +157,7 @@ module.exports = {
                 return fixer.replaceText(node, `{t('${node.value}')}`)
               },
               data: {
-                value: generate(node),
+                value: String(node.value),
                 type: node.type,
               }
             });
@@ -182,7 +182,7 @@ module.exports = {
               return fixer.replaceText(node, `{{t('${node.value}')}}`)
             },
             data: {
-              value: generate(node),
+              value: String(node.value),
               type: node.type,
             }
           });
@@ -208,7 +208,7 @@ module.exports = {
               }
             },
             data: {
-              value: generate(node),
+              value: `${node.key.name}="${node.value.value}"`,
               type: node.type,
             }
           });

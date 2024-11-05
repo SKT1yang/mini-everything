@@ -12,7 +12,7 @@ const utils = require("../utils")
 /** @type {import('eslint').Rule.RuleModule} */
 module.exports = {
   meta: {
-    type: 'suggestion', // `problem`, `suggestion`, or `layout`
+    type: 'problem', // `problem`, `suggestion`, or `layout`
     docs: {
       description: "自动导入国际化包裹函数",
       recommended: false,
@@ -75,13 +75,13 @@ module.exports = {
     }), {
       ...getEsNodeListener(),
       "Program:exit"(node) {
-        console.log("Program:exit", needImportFunction, functionImported)
+        // console.log("Program:exit", needImportFunction, functionImported)
         if (needImportFunction && !functionImported) {
           context.report({
             node,
             messageId: 'unimport',
             fix(fixer) {
-              return fixer.insertTextBefore(node, `import { t } from "@/entry/languages";`)
+              return fixer.insertTextBefore(node, `import { t } from "@/entry/languages/useLanguage";`)
             },
           })
         }

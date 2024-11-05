@@ -15,19 +15,19 @@ const requireIndex = require("requireindex");
 //------------------------------------------------------------------------------
 
 const plugin = {
-  configs: [],
+  configs: {},
   rules: requireIndex(__dirname + "/rules"),
 };
 
 // assign configs here so we can reference `plugin`
 Object.assign(plugin.configs, {
-  recommended: [{
+  recommended: {
     plugins: {
       i18n: plugin
     },
     rules: {
-      "i18n/wrap-i18n-function": "warn",
-      "i18n/import-i18n-function": "warn",
+      "i18n/wrap-i18n-function": "error",
+      "i18n/import-i18n-function": "error",
     },
     files: ["**/*.{js,mjs,cjs,ts,tsx,vue}"],
     languageOptions: {
@@ -41,8 +41,10 @@ Object.assign(plugin.configs, {
         ecmaVersion: 2020,
       },
     },
+  },
+  ignores: {
     ignores: ["**/languages/"]
-  }]
+  },
 });
 
 // 直接合并成一个module.exports
