@@ -1,0 +1,51 @@
+{
+  "name": "eslint-plugin-i18n-wrap",
+  "version": "0.0.19",
+  "description": "国际化包裹翻译函数",
+  "keywords": [
+    "eslint",
+    "eslintplugin",
+    "eslint-plugin"
+  ],
+  "author": "yangguodong",
+  "main": "./lib/index.js",
+  "exports": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "lint": "npm-run-all \"lint:*\"",
+    "lint:eslint-docs": "npm-run-all \"update:eslint-docs -- --check\"",
+    "lint:js": "eslint .",
+    "test": "mocha tests --recursive",
+    "update:eslint-docs": "eslint-doc-generator"
+  },
+  "dependencies": {
+    "@types/escodegen": "^0.0.10",
+    "@typescript-eslint/parser": "^8.12.2",
+    "escodegen": "^2.1.0",
+    "requireindex": "^1.2.0",
+    "vue-eslint-parser": "^9.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.14.0",
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^22.8.6",
+    "eslint": "^9.14.0",
+    "eslint-doc-generator": "^1.7.1",
+    "eslint-plugin-eslint-plugin": "^6.3.1",
+    "eslint-plugin-n": "^17.12.0",
+    "mocha": "^10.8.2",
+    "npm-run-all2": "^7.0.1",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3"
+  },
+  "engines": {
+    "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
+  },
+  "peerDependencies": {
+    "eslint": ">= 9"
+  },
+  "license": "MIT"
+}

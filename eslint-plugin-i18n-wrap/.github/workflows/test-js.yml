@@ -1,0 +1,46 @@
+name: Test
+
+on:
+  pull_request:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  test_js:
+    name: "Test - Node: ${{ matrix.node_version }} - TS: ${{ matrix.ts_version }} - OS: ${{ matrix.os }}"
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - "ubuntu-latest"
+        node_version:
+          - "18.18"
+          - "20"
+          - "latest"
+        ts_version:
+          # - "next"
+          - "latest"
+          # - "4.7.4"
+          # - "JS"
+    runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.ts_version == 'next' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/prepare
+
+      - name: Setup NodeJs ${{ matrix.node_version }} for testing
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node_version }}
+
+      # - name: Add TypeScript "${{ matrix.ts_version }}" for testing
+      #   run: pnpm add -D typescript@"${{ matrix.ts_version }}"
+
+      - name: Run Tests
+        run: pnpm test:js-run
+
+      - name: Report coverage
+        uses: codecov/codecov-action@v4.6.0
+        with:
+          file: coverage/lcov.info
+          flags: ${{ matrix.ts_version }}
