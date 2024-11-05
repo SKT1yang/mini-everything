@@ -1,16 +1,16 @@
 // eslint.config.js
-import eslint from "@eslint/js";
-import globals from "globals";
-import tseslint from "typescript-eslint";
-import eslintPluginVue from "eslint-plugin-vue";
-import i18nWrap from "eslint-plugin-i18n-wrap";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
-import vueEslintParser from "vue-eslint-parser";
-import tsEslintParser from "@typescript-eslint/parser";
+import eslint from '@eslint/js';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
+import eslintPluginVue from 'eslint-plugin-vue';
+import i18nWrap from 'eslint-plugin-i18n-wrap';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import vueEslintParser from 'vue-eslint-parser';
+import tsEslintParser from '@typescript-eslint/parser';
 
 export default tseslint.config(
   {
-    ignores: ["node_modules", "dist", "public"],
+    ignores: ['node_modules', 'dist', 'public'],
   },
 
   /** js推荐配置 */
@@ -18,15 +18,15 @@ export default tseslint.config(
   /** ts推荐配置 */
   ...tseslint.configs.recommended,
   /** vue推荐配置 */
-  ...eslintPluginVue.configs["flat/recommended"],
+  ...eslintPluginVue.configs['flat/recommended'],
 
   {
-    files: ["**/*.{js,mjs,cjs,ts,tsx,vue}"],
+    files: ['**/*.{js,mjs,cjs,ts,tsx,vue}'],
     languageOptions: {
       parser: vueEslintParser,
       parserOptions: {
         parser: tsEslintParser,
-        sourceType: "module",
+        sourceType: 'module',
         ecmaFeatures: {
           jsx: true,
         },
@@ -35,8 +35,8 @@ export default tseslint.config(
     },
     plugins: { i18n: i18nWrap },
     rules: {
-      "i18n/wrap-i18n-function": "warn",
-      "i18n/import-i18n-function": "warn",
+      'i18n/wrap-i18n-function': 'warn',
+      'i18n/import-i18n-function': 'warn',
     },
   },
 
@@ -44,9 +44,9 @@ export default tseslint.config(
    * javascript 规则
    */
   {
-    files: ["**/*.{js,mjs,cjs,vue}"],
+    files: ['**/*.{js,mjs,cjs,vue}'],
     rules: {
-      "no-console": "warn",
+      'no-console': 'warn',
     },
   },
 
@@ -68,12 +68,12 @@ export default tseslint.config(
    * vue 规则
    */
   {
-    files: ["**/*.vue"],
+    files: ['**/*.vue'],
     languageOptions: {
       parserOptions: {
         /** typescript项目需要用到这个 */
         parser: tseslint.parser,
-        ecmaVersion: "latest",
+        ecmaVersion: 'latest',
         /** 允许在.vue 文件中使用 JSX */
         ecmaFeatures: {
           jsx: true,
@@ -82,8 +82,8 @@ export default tseslint.config(
     },
     rules: {
       // 在这里追加 vue 规则
-      "vue/no-mutating-props": [
-        "error",
+      'vue/no-mutating-props': [
+        'error',
         {
           shallowOnly: true,
         },
@@ -95,7 +95,7 @@ export default tseslint.config(
    * typescript 规则
    */
   {
-    files: ["**/*.{ts,tsx,vue}"],
+    files: ['**/*.{ts,tsx,vue}'],
     rules: {},
   },
 

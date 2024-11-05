@@ -2,7 +2,9 @@
  * @fileoverview 存在未被国际化包裹的中文
  * @author yangguodong
  */
+const generate = require('escodegen').generate;
 const utils = require("../utils")
+
 
 "use strict";
 
@@ -22,8 +24,7 @@ module.exports = {
     fixable: "code", // Or `code` or `whitespace`
     schema: [], // Add a schema if the rule has options
     messages: {
-      unwrap: "存在未被国际化包裹的中文",
-      // unimport: "未引入国际化函数"
+      unwrap: `存在未被国际化函数包裹的中文, 类型: '{{type}}', 值:'{{value}}'`,
     }, // Add messageId and message
   },
 
@@ -107,6 +108,10 @@ module.exports = {
                 } else {
                   return fixer.replaceText(node, `t('${node.value}')`)
                 }
+              },
+              data: {
+                value: String(node.value),
+                type: node.type,
               }
             });
           }
@@ -133,6 +138,10 @@ module.exports = {
                 } else {
                   return fixer.replaceText(node, `t('${text}')`)
                 }
+              },
+              data: {
+                value: generate(node),
+                type: node.type,
               }
             });
           }
@@ -146,6 +155,10 @@ module.exports = {
               messageId: "unwrap",
               fix(fixer) {
                 return fixer.replaceText(node, `{t('${node.value}')}`)
+              },
+              data: {
+                value: generate(node),
+                type: node.type,
               }
             });
           }
@@ -167,6 +180,10 @@ module.exports = {
             messageId: "unwrap",
             fix(fixer) {
               return fixer.replaceText(node, `{{t('${node.value}')}}`)
+            },
+            data: {
+              value: generate(node),
+              type: node.type,
             }
           });
         }
@@ -189,6 +206,10 @@ module.exports = {
               } else {
                 return null
               }
+            },
+            data: {
+              value: generate(node),
+              type: node.type,
             }
           });
         }

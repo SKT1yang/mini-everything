@@ -73,6 +73,7 @@ function compositingVisitors(visitor, ...visitors) {
 }
 
 
+
 module.exports = {
   /**
    * Register the given visitor to parser services.
@@ -87,5 +88,5 @@ module.exports = {
    */
   defineTemplateBodyVisitor,
   hasChinese,
-  compositingVisitors
+  compositingVisitors,
 }

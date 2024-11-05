@@ -18,8 +18,8 @@ importers:
         specifier: ^4.2.5
         version: 4.2.5(vue@3.5.12(typescript@5.6.3))
       eslint-plugin-i18n-wrap:
-        specifier: ^0.0.9
-        version: 0.0.9(eslint@9.13.0)(typescript@5.6.3)
+        specifier: ^0.0.11
+        version: 0.0.11(eslint@9.13.0)(typescript@5.6.3)
       vue:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -428,6 +428,9 @@ packages:
     peerDependencies:
       eslint: '>=8.40.0'
 
+  '@types/escodegen@0.0.10':
+    resolution: {integrity: sha512-IVvcNLEFbiL17qiGRGzyfx/u9K6lA5w6wcQSIgv2h4JG3ZAFIY1Be9ITTSPuARIxRpzW54s8OvcF6PdonBbDzg==}
+
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
@@ -728,17 +731,22 @@ packages:
     engines: {node: '>=4.0'}
     hasBin: true
 
+  escodegen@2.1.0:
+    resolution: {integrity: sha512-2NlIDTwUWJN0mRPQOdtQBzbUHvdGY2P1VXSyU83Q3xKxM7WHX2Ql8dKq782Q9TgQUNOLEzEYu9bzLNj1q88I5w==}
+    engines: {node: '>=6.0'}
+    hasBin: true
+
   eslint-config-prettier@9.1.0:
     resolution: {integrity: sha512-NSWl5BFQWEPi1j4TjVNItzYV7dZXZ+wP6I6ZhrBGpChQhZRUaElihE9uRRkcbRnNb76UMKDF3r+WTmNcGPKsqw==}
     hasBin: true
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-plugin-i18n-wrap@0.0.9:
-    resolution: {integrity: sha512-B/nZN97rappMkeihhzhSeAMvcCoj8LhPprcJXjAZM384rr1G9Fw9+IHIOdJaFjZ73HjBsiAZ50aRJBr4DXUunA==}
+  eslint-plugin-i18n-wrap@0.0.11:
+    resolution: {integrity: sha512-Tioy1QIHgHnTv1PUH3b/kcSKMSC/epGNW1PpaZffPP4cWQm35Os8SMv40gz3prb80k42uTwqYhtk+nV9qp/RQw==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
-      eslint: '>=8.57.0'
+      eslint: '>= 9'
 
   eslint-plugin-prettier@5.2.1:
     resolution: {integrity: sha512-gH3iR3g4JfF+yYPaJYkN7jEl9QbweL/YfkoRlNnuIEHEz1vHVlCmWOS+eGGiRuzHQXdJFCOTxRgvju9b8VUmrw==}
@@ -1643,6 +1651,8 @@ snapshots:
       - supports-color
       - typescript
 
+  '@types/escodegen@0.0.10': {}
+
   '@types/estree@1.0.6': {}
 
   '@types/json-schema@7.0.15': {}
@@ -2015,13 +2025,23 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
+  escodegen@2.1.0:
+    dependencies:
+      esprima: 4.0.1
+      estraverse: 5.3.0
+      esutils: 2.0.3
+    optionalDependencies:
+      source-map: 0.6.1
+
   eslint-config-prettier@9.1.0(eslint@9.13.0):
     dependencies:
       eslint: 9.13.0
 
-  eslint-plugin-i18n-wrap@0.0.9(eslint@9.13.0)(typescript@5.6.3):
+  eslint-plugin-i18n-wrap@0.0.11(eslint@9.13.0)(typescript@5.6.3):
     dependencies:
+      '@types/escodegen': 0.0.10
       '@typescript-eslint/parser': 8.12.2(eslint@9.13.0)(typescript@5.6.3)
+      escodegen: 2.1.0
       eslint: 9.13.0
       requireindex: 1.2.0
       vue-eslint-parser: 9.4.3(eslint@9.13.0)

@@ -17,6 +17,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ConfigProvider, FloatButtonGroup, FloatButton } from "ant-design-vue";
-import { locale, handleSwitchTranlate } from "@/languages/useLanguage";
+import { ConfigProvider, FloatButtonGroup, FloatButton } from 'ant-design-vue';
+import { locale, handleSwitchTranlate } from '@/languages/useLanguage';
 </script>

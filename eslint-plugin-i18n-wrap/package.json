@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-i18n-wrap",
-  "version": "0.0.9",
+  "version": "0.0.11",
   "description": "国际化包裹翻译函数",
   "keywords": [
     "eslint",
@@ -21,7 +21,9 @@
     "update:eslint-docs": "eslint-doc-generator"
   },
   "dependencies": {
+    "@types/escodegen": "^0.0.10",
     "@typescript-eslint/parser": "^8.12.2",
+    "escodegen": "^2.1.0",
     "requireindex": "^1.2.0",
     "vue-eslint-parser": "^9.4.3"
   },
@@ -42,7 +44,7 @@
     "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
   },
   "peerDependencies": {
-    "eslint": ">=8.57.0"
+    "eslint": ">= 9"
   },
   "license": "MIT"
 }
