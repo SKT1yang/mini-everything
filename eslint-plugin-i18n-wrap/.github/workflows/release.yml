@@ -3,67 +3,42 @@ name: Release
 on:
   push:
     branches:
-      - main
-      - next
-
-permissions:
-  contents: write
-  issues: write
-  pull-requests: write
-
-concurrency:
-  group: Release
-  cancel-in-progress: false
+      - master
 
 jobs:
-  lint_js:
-    uses: ./.github/workflows/lint-js.yml
-  lint_docs:
-    uses: ./.github/workflows/lint-docs.yml
-  lint_knip_dev:
-    uses: ./.github/workflows/lint-knip-dev.yml
-  lint_knip_prod:
-    uses: ./.github/workflows/lint-knip-prod.yml
-  lint_markdown:
-    uses: ./.github/workflows/lint-markdown.yml
-  lint_packages:
-    uses: ./.github/workflows/lint-packages.yml
-  lint_spelling:
-    uses: ./.github/workflows/lint-spelling.yml
-  lint_yaml:
-    uses: ./.github/workflows/lint-yaml.yml
-  test_js:
-    uses: ./.github/workflows/test-js.yml
-  typecheck:
-    uses: ./.github/workflows/typecheck.yml
-
   release:
-    needs:
-      - lint_js
-      - lint_docs
-      - lint_knip_dev
-      - lint_knip_prod
-      - lint_markdown
-      - lint_packages
-      - lint_spelling
-      - lint_yaml
-      - test_js
-      - typecheck
+    name: Release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Repo
+        uses: actions/checkout@v4
         with:
+          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
-          persist-credentials: false
-      - uses: ./.github/actions/prepare
-        with:
-          node-version: v20
 
+      - name: Setup Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install Dependencies
+        run: pnpm install
       - name: Build
         run: pnpm run build
 
-      - name: Release
-        run: pnpm run release
+      - name: Create Release Pull Request or Publish to npm
+        id: changesets
+        uses: changesets/action@v1
+        with:
+          # this expects you to have a npm script called version that runs some logic and then calls `changeset version`.
+          version: pnpm run version:ci
+          # This expects you to have a script called release which does a build for your packages and calls changeset publish
+          publish: pnpm run release
+          commit: 'chore: release `@intlify/eslint-plugin-vue-i18n`'
+          title: 'chore: release `@intlify/eslint-plugin-vue-i18n`'
         env:
-          GITHUB_TOKEN: ${{ github.token }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

@@ -1,9 +1,7 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
+  "exclude": ["tests/lib/**/*", "scripts/**/*", "typings/**/*"],
   "compilerOptions": {
-    "rootDir": "src",
-    "outDir": "lib",
-    "noCheck": true
-  },
-  "include": ["src", "typings"]
+    "removeComments": true /* Do not emit comments to output. */
+  }
 }
