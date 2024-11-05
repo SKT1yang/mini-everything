@@ -33,6 +33,10 @@ ruleTester.run("wrap-i18n-function", rule, {
     { code: 'const name = t("中文");' },
     { code: 'const age = 18;' },
     { code: 'const persion = { name: t("中文") };' },
+    { code: "() => t(`共 {} 项`, total.value)", },
+    { code: `console.log("中文");console.warn("中文");console.error("中文");console.info("中文");` },
+    { code: `console.log(\`中文\`);console.warn(\`中文\`);console.error(\`中文\`);console.info(\`中文\`);` },
+    { code: `log(\`中文\`);warn(\`中文\`);error(\`中文\`);info(\`中文\`);` },
 
     // .vue
     {
@@ -81,6 +85,7 @@ ruleTester.run("wrap-i18n-function", rule, {
       output: "const persion = [t('中文')];",
       errors: [{ messageId: "unwrap" }],
     },
+
 
     /**
      * vue
@@ -146,6 +151,19 @@ ruleTester.run("wrap-i18n-function", rule, {
       // 动态属性  箭头函数
       code: "<template><div :title=\"() => '中文'\"></div></template>",
       output: "<template><div :title=\"() => t('中文')\"></div></template>",
+      errors: [{ messageId: "unwrap" }],
+    },
+    {
+      filename: 'test.vue',
+      // 动态属性  箭头函数
+      code: `<template>
+      <Button>
+        保存
+      </Button>
+      </template>`,
+      output: `<template>
+      <Button>{{t('保存')}}</Button>
+      </template>`,
       errors: [{ messageId: "unwrap" }],
     },
     // v-if

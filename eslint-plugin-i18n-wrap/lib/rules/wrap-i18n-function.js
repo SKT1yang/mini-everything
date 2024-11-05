@@ -46,14 +46,16 @@ module.exports = {
       switch (node.type) {
         case "Literal":
           {
-            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.name !== "t"
-            result = typeof node.value === "string" && utils.hasChinese(node.value) && (node.parent.type !== "CallExpression" || not_t_function)
+            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.type === 'Identifier' && node.parent.callee.name !== "t"
+            result = typeof node.value === "string" && utils.hasChinese(node.value) && (node.parent.type !== "CallExpression" || not_t_function) && !isConsole(node)
             break
           }
 
         case "TemplateLiteral":
           {
-            result = node.quasis.some(quasi => utils.hasChinese(quasi.value.raw))
+            // @ts-ignore
+            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.name !== "t"
+            result = node.quasis.some(quasi => utils.hasChinese(quasi.value.raw)) && (node.parent.type !== "CallExpression" || not_t_function) && !isConsole(node)
             break
           }
 
@@ -89,6 +91,21 @@ module.exports = {
     }
 
     /**
+     * console 不应该被国际化包裹
+     * @param {Literal | TemplateLiteral} node
+     * @returns
+     */
+    function isConsole(node) {
+      if (node.parent.type === 'CallExpression' && node.parent.callee.type === 'MemberExpression' && node.parent.callee.object.type === 'Identifier' && node.parent.callee.object.name === 'console') {
+        return true
+      }
+      if (node.parent.type === 'CallExpression' && node.parent.callee.type === 'Identifier' && ['log', 'info', 'warn', 'error'].includes(node.parent.callee.name)) {
+        return true
+      }
+      return false
+    }
+
+    /**
      * 获取es节点监听器
      * @description 包括jsx节点
      * @returns {TemplateListener}
@@ -98,6 +115,7 @@ module.exports = {
         // 字符串字面量
         Literal(node) {
           // console.log('****Literal****\n', node.type, '\n', node.value, '\n')
+          // console.log('****Literal****\n', node)
           if (isUnwrap(node)) {
             context.report({
               node,
@@ -179,7 +197,7 @@ module.exports = {
             node,
             messageId: "unwrap",
             fix(fixer) {
-              return fixer.replaceText(node, `{{t('${node.value}')}}`)
+              return fixer.replaceText(node, `{{t('${node.value.trim()}')}}`)
             },
             data: {
               value: String(node.value),

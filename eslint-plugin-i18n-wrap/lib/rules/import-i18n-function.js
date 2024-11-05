@@ -76,12 +76,18 @@ module.exports = {
       ...getEsNodeListener(),
       "Program:exit"(node) {
         // console.log("Program:exit", needImportFunction, functionImported)
+        console.log("Program:exit node.tokens", node, node.tokens)
         if (needImportFunction && !functionImported) {
           context.report({
             node,
             messageId: 'unimport',
             fix(fixer) {
-              return fixer.insertTextBefore(node, `import { t } from "@/entry/languages/useLanguage";`)
+              if (node.tokens.length === 0) {
+                return fixer.insertTextBefore(node, `<script>import { t } from "@/entry/languages/useLanguage";</script>`)
+              } else {
+                return fixer.insertTextBefore(node, `import { t } from "@/entry/languages/useLanguage";`)
+              }
+
             },
           })
         }

@@ -53,6 +53,12 @@ ruleTester.run("import-i18n-function", rule, {
     },
     {
       filename: 'test.vue',
+      code: `<template><div>{{t('中文')}}</div></template>`,
+      output: `<script>import { t } from "@/entry/languages/useLanguage";</script><template><div>{{t('中文')}}</div></template>`,
+      errors: [{ messageId: "unimport" }],
+    },
+    {
+      filename: 'test.vue',
       code: `<template><div>{{t('中文')}}</div></template><script></script>`,
       output: `<template><div>{{t('中文')}}</div></template><script>import { t } from "@/entry/languages/useLanguage";</script>`,
       errors: [{ messageId: "unimport" }],
