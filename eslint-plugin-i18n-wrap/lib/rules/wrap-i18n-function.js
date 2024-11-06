@@ -4,6 +4,7 @@
  */
 const generate = require('escodegen').generate;
 const utils = require("../utils")
+const { checkLiteralIsUnwrap, checkTemplateLiteralIsUnwrap } = require("../utils/rule")
 
 
 "use strict";
@@ -46,16 +47,13 @@ module.exports = {
       switch (node.type) {
         case "Literal":
           {
-            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.type === 'Identifier' && node.parent.callee.name !== "t"
-            result = typeof node.value === "string" && utils.hasChinese(node.value) && (node.parent.type !== "CallExpression" || not_t_function) && !isConsole(node)
+            result = checkLiteralIsUnwrap(node)
             break
           }
 
         case "TemplateLiteral":
           {
-            // @ts-ignore
-            const not_t_function = node.parent.type === "CallExpression" && node.parent.callee.name !== "t"
-            result = node.quasis.some(quasi => utils.hasChinese(quasi.value.raw)) && (node.parent.type !== "CallExpression" || not_t_function) && !isConsole(node)
+            result = checkTemplateLiteralIsUnwrap(node)
             break
           }
 
@@ -88,21 +86,6 @@ module.exports = {
           result = false
       }
       return result
-    }
-
-    /**
-     * console 不应该被国际化包裹
-     * @param {Literal | TemplateLiteral} node
-     * @returns
-     */
-    function isConsole(node) {
-      if (node.parent.type === 'CallExpression' && node.parent.callee.type === 'MemberExpression' && node.parent.callee.object.type === 'Identifier' && node.parent.callee.object.name === 'console') {
-        return true
-      }
-      if (node.parent.type === 'CallExpression' && node.parent.callee.type === 'Identifier' && ['log', 'info', 'warn', 'error'].includes(node.parent.callee.name)) {
-        return true
-      }
-      return false
     }
 
     /**

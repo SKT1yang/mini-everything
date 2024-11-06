@@ -29,19 +29,19 @@ const ruleTester = new RuleTester({
 })
 ruleTester.run("import-i18n-function", rule, {
   valid: [
-    // // es
-    // { code: `const name = "中文";` },
-    // { code: `import { t } from "@/entry/languages/useLanguage";\nconst name = t("中文");` },
+    // es
+    { code: `const name = "中文";` },
+    { code: `import { t } from "@/entry/languages/useLanguage";\nconst name = t("中文");` },
 
-    // // vue
-    // {
-    //   filename: 'test.vue',
-    //   code: `<template><div>中文</div></template>`,
-    // },
-    // {
-    //   filename: 'test.vue',
-    //   code: `<template><div>{{t('中文')}}</div></template><script>import { t } from "@/entry/languages/useLanguage";</script>`,
-    // },
+    // vue
+    {
+      filename: 'test.vue',
+      code: `<template><div>中文</div></template>`,
+    },
+    {
+      filename: 'test.vue',
+      code: `<template><div>{{t('中文')}}</div></template><script>import { t } from "@/entry/languages/useLanguage";</script>`,
+    },
   ],
 
   invalid: [
@@ -54,7 +54,7 @@ ruleTester.run("import-i18n-function", rule, {
     {
       filename: 'test.vue',
       code: `<template><div>{{t('中文')}}</div></template>`,
-      output: `<script>import { t } from "@/entry/languages/useLanguage";</script><template><div>{{t('中文')}}</div></template>`,
+      output: `<script setup>import { t } from "@/entry/languages/useLanguage";</script><template><div>{{t('中文')}}</div></template>`,
       errors: [{ messageId: "unimport" }],
     },
     {

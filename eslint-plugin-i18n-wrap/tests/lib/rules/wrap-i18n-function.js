@@ -36,7 +36,6 @@ ruleTester.run("wrap-i18n-function", rule, {
     { code: "() => t(`共 {} 项`, total.value)", },
     { code: `console.log("中文");console.warn("中文");console.error("中文");console.info("中文");` },
     { code: `console.log(\`中文\`);console.warn(\`中文\`);console.error(\`中文\`);console.info(\`中文\`);` },
-    { code: `log(\`中文\`);warn(\`中文\`);error(\`中文\`);info(\`中文\`);` },
 
     // .vue
     {
@@ -83,6 +82,17 @@ ruleTester.run("wrap-i18n-function", rule, {
     {
       code: "const persion = ['中文'];",
       output: "const persion = [t('中文')];",
+      errors: [{ messageId: "unwrap" }],
+    },
+    // 链式调用
+    {
+      code: `message.success("成功");`,
+      output: `message.success(t('成功'));`,
+      errors: [{ messageId: "unwrap" }],
+    },
+    {
+      code: "message.success(`成功`);",
+      output: `message.success(t('成功'));`,
       errors: [{ messageId: "unwrap" }],
     },
 

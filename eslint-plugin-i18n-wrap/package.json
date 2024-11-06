@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-i18n-wrap",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "description": "国际化包裹翻译函数",
   "keywords": [
     "eslint",

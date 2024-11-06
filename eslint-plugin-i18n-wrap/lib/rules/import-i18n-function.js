@@ -4,6 +4,11 @@
  */
 "use strict";
 const utils = require("../utils")
+const { getAllPackageJsonInfo } = require("../utils/getPackageJsonCache")
+
+// 缓存存储所有找到的 package.json 路径
+/** @type {Array<{path: string, content: object}>} */
+let allPackageJsonInfo = []
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -29,7 +34,7 @@ module.exports = {
     // variables should be defined here
     // 获取当前文件名、文件路径信息
     const filename = context.getFilename()
-    const cwd = context.getCwd && context.getCwd()
+    const rootDir = context.getCwd && context.getCwd()
     // console.log('filename:', filename)
     // console.log('cwd:', cwd)
 
@@ -66,6 +71,15 @@ module.exports = {
             functionImported = true
           }
         },
+        // Program: async function () {
+        //   if (rootDir) {
+        //     if (allPackageJsonInfo.length === 0) {
+        //       // 获取所有 package.json 文件的路径
+        //       allPackageJsonInfo = await getAllPackageJsonInfo(rootDir);
+        //       console.log('Found package.json files:', allPackageJsonInfo.length, typeof allPackageJsonInfo);
+        //     }
+        //   }
+        // },
       }
     }
 
@@ -76,14 +90,18 @@ module.exports = {
       ...getEsNodeListener(),
       "Program:exit"(node) {
         // console.log("Program:exit", needImportFunction, functionImported)
-        console.log("Program:exit node.tokens", node, node.tokens)
         if (needImportFunction && !functionImported) {
           context.report({
             node,
             messageId: 'unimport',
             fix(fixer) {
+              // 输出所有找到的 package.json 路径
+              // console.log('exit Found package.json files:', allPackageJsonInfo.length, typeof allPackageJsonInfo);
+              // allPackageJsonInfo.forEach((filePath) => {
+              //   console.log(filePath);
+              // });
               if (node.tokens.length === 0) {
-                return fixer.insertTextBefore(node, `<script>import { t } from "@/entry/languages/useLanguage";</script>`)
+                return fixer.insertTextBefore(node, `<script setup>import { t } from "@/entry/languages/useLanguage";</script>`)
               } else {
                 return fixer.insertTextBefore(node, `import { t } from "@/entry/languages/useLanguage";`)
               }
