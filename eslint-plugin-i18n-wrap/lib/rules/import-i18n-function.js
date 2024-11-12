@@ -131,15 +131,15 @@ module.exports = {
             messageId: 'unimport',
             fix(fixer) {
               // 用户voerkai18n配置，前后不带 '/'
-              let entry = voerkai18n.entry ? 'languages' : voerkai18n.entry
+              let entry = voerkai18n.entry ? voerkai18n.entry : 'languages'
               let sourcePath = `${srcAlias}/${entry}${pathSuffix}`
               if (auto && dependencies?.["@voerkai18n/runtime"]) {
                 let entityEntry = `${entry}${pathSuffix}`
                 let result = getRelativePathTolanguagePath(filename, `${path.dirname(packageJsonPath)}/src/${entityEntry}`)
                 if (result) {
-                  if (!sourcePath.startsWith('.') && !sourcePath.startsWith('/')) {
+                  if (!result.startsWith('.') && !result.startsWith('/') && !result.startsWith(srcAlias)) {
                     // 如果路径不是相对路径，则添加./
-                    sourcePath = `./${sourcePath}`
+                    sourcePath = `./${result}`
                   }
                 }
               }
