@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs/promises');
+const fs_sync = require('fs');
 
 /**
  * 递归扫描目录，查找所有 package.json 文件
@@ -62,7 +63,6 @@ async function getAllPackageJsonInfo(rootDir) {
         return { path: filePath, content };
       })
     );
-
     return packageJsonData;
   } catch (error) {
     console.error('Error reading package.json files:', error);
@@ -70,7 +70,49 @@ async function getAllPackageJsonInfo(rootDir) {
   }
 }
 
+/**
+ * Recursively searches for the nearest ancestor package.json and returns its content as a JS object.
+ * @param {string} filePath - The starting file path.
+ * @returns {{packageJsonPath: string, packageJson: {voerkai18n?: {entry: string}, dependencies?: {'@voerkai18n/runtime': string}}}|null} - The package.json content as an object, or null if not found.
+ */
+function findNearestPackageJson(filePath) {
+  let dir = path.dirname(filePath);
+
+  while (dir !== path.parse(dir).root) {
+    const packageJsonPath = path.join(dir, 'package.json');
+
+    if (fs_sync.existsSync(packageJsonPath)) { // Check if package.json exists
+      try {
+        const packageJsonContent = fs_sync.readFileSync(packageJsonPath, 'utf-8');
+        return { packageJsonPath, packageJson: JSON.parse(packageJsonContent) };
+      } catch (error) {
+        console.error('Failed to parse package.json:', error);
+        return null;
+      }
+    }
+
+    // Move up one directory
+    dir = path.dirname(dir);
+  }
+
+  // Return null if no package.json is found
+  return null;
+}
+
+/**
+ * Calculate the relative path from a project file to the nearest package.json.
+ * @param {string} filePath - The absolute path of the project file.
+ * @param {string} languagePath - The absolute path of the package.json file.
+ * @returns {string} - The relative path from filePath to packageJsonPath.
+ */
+function getRelativePathTolanguagePath(filePath, languagePath) {
+  // 针对操作系统路径问题，统一使用正斜杠
+  return path.relative(path.dirname(filePath), languagePath).replace(/\\/g, '/');
+}
+
 
 module.exports = {
-  getAllPackageJsonInfo
+  getAllPackageJsonInfo,
+  findNearestPackageJson,
+  getRelativePathTolanguagePath
 }

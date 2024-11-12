@@ -18,8 +18,8 @@ importers:
         specifier: ^4.2.5
         version: 4.2.5(vue@3.5.12(typescript@5.6.3))
       eslint-plugin-i18n-wrap:
-        specifier: ^0.0.19
-        version: 0.0.19(eslint@9.13.0)(typescript@5.6.3)
+        specifier: ^0.0.32
+        version: 0.0.32(eslint@9.13.0)(typescript@5.6.3)
       vue:
         specifier: ^3.5.12
         version: 3.5.12(typescript@5.6.3)
@@ -418,9 +418,6 @@ packages:
     peerDependencies:
       eslint: '>=8.40.0'
 
-  '@types/escodegen@0.0.10':
-    resolution: {integrity: sha512-IVvcNLEFbiL17qiGRGzyfx/u9K6lA5w6wcQSIgv2h4JG3ZAFIY1Be9ITTSPuARIxRpzW54s8OvcF6PdonBbDzg==}
-
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
@@ -726,9 +723,9 @@ packages:
     engines: {node: '>=6.0'}
     hasBin: true
 
-  eslint-plugin-i18n-wrap@0.0.19:
-    resolution: {integrity: sha512-C6R703O5AgJ9/mviOGqBy16yzMcpOwhYvSMRbi+uhpfoyZYHvCj3qbwATuHiA9Ltd1dlmnjSGhK8nusUVqznUQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+  eslint-plugin-i18n-wrap@0.0.32:
+    resolution: {integrity: sha512-PL1Tlz8HqREZzdH8UHA/X1bPF1PlM8KwNOWcW6jNngU/aGVf5fqkTd7MVJwBHeKzSCKgoD73EwdTTpjGn9mpDQ==}
+    engines: {node: 18.18.0 || 20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>= 9'
 
@@ -1600,8 +1597,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@types/escodegen@0.0.10': {}
-
   '@types/estree@1.0.6': {}
 
   '@types/json-schema@7.0.15': {}
@@ -1982,9 +1977,8 @@ snapshots:
     optionalDependencies:
       source-map: 0.6.1
 
-  eslint-plugin-i18n-wrap@0.0.19(eslint@9.13.0)(typescript@5.6.3):
+  eslint-plugin-i18n-wrap@0.0.32(eslint@9.13.0)(typescript@5.6.3):
     dependencies:
-      '@types/escodegen': 0.0.10
       '@typescript-eslint/parser': 8.12.2(eslint@9.13.0)(typescript@5.6.3)
       escodegen: 2.1.0
       eslint: 9.13.0

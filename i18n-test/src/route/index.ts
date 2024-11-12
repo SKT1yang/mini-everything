@@ -1,5 +1,7 @@
+import { t } from "../languages/useLanguage";
 import { createRouter, createWebHashHistory } from 'vue-router';
 
+const name =t('中文');
 const routes = [
   {
     path: '/',

@@ -42,6 +42,27 @@ Object.assign(plugin.configs, {
       },
     },
   },
+  all: {
+    plugins: {
+      i18n: plugin
+    },
+    rules: {
+      "i18n/wrap-i18n-function": "error",
+      "i18n/import-i18n-function": ["error", { auto: true }],
+    },
+    files: ["**/*.{js,mjs,cjs,ts,tsx,vue}"],
+    languageOptions: {
+      parser: require("vue-eslint-parser"),
+      parserOptions: {
+        parser: require("@typescript-eslint/parser"),
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+        ecmaVersion: 2020,
+      },
+    },
+  },
   ignores: {
     ignores: ["**/languages/"]
   },

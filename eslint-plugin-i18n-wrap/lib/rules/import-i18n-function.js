@@ -4,11 +4,11 @@
  */
 "use strict";
 const utils = require("../utils")
-const { getAllPackageJsonInfo } = require("../utils/getPackageJsonCache")
+const path = require('path');
+const { findNearestPackageJson, getRelativePathTolanguagePath } = require("../utils/getPackageJsonCache")
 
-// 缓存存储所有找到的 package.json 路径
-/** @type {Array<{path: string, content: object}>} */
-let allPackageJsonInfo = []
+const DEFAULT_PATH_SUFFIX = ''
+const DEFAULT_SRC_ALIAS = '@'
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -24,7 +24,27 @@ module.exports = {
       url: null, // URL to the documentation page for this rule
     },
     fixable: 'code', // Or `code` or `whitespace`
-    schema: [], // Add a schema if the rule has options
+    schema: [
+      // 定义配置项
+      {
+        type: 'object',
+        properties: {
+          auto: {
+            type: 'boolean',
+            default: false, // 默认值
+          },
+          pathSuffix: {
+            type: 'string',
+            default: DEFAULT_PATH_SUFFIX, // 默认值
+          },
+          srcAlias: {
+            type: 'string',
+            default: DEFAULT_SRC_ALIAS, // 默认值
+          },
+        },
+        additionalProperties: false,
+      },
+    ], // Add a schema if the rule has options
     messages: {
       unimport: "存在国际化函数调用但未引入该函数"
     }, // Add messageId and message
@@ -34,12 +54,36 @@ module.exports = {
     // variables should be defined here
     // 获取当前文件名、文件路径信息
     const filename = context.getFilename()
-    const rootDir = context.getCwd && context.getCwd()
+    // const rootDir = context.getCwd && context.getCwd()
     // console.log('filename:', filename)
     // console.log('cwd:', cwd)
 
+    const options = context.options[0] || {};
+    const auto = options.auto || false;
+    const pathSuffix = options.pathSuffix || DEFAULT_PATH_SUFFIX;
+    const srcAlias = options.srcAlias || DEFAULT_SRC_ALIAS;
+
     let needImportFunction = false
     let functionImported = false
+    /** @type {{voerkai18n?: {entry: string}, dependencies?: {'@voerkai18n/runtime': string}} }*/
+    let packageJson = {}
+    let packageJsonPath = ""
+    /** @type {{entry: string} }*/
+    let voerkai18n = {
+      entry: "languages"
+    }
+    /** @type {{'@voerkai18n/runtime'?: string} }*/
+    let dependencies = {}
+
+    if (auto) {
+      const packageJsonInfo = findNearestPackageJson(filename) || { packageJson: {}, packageJsonPath: "" }
+      packageJson = packageJsonInfo.packageJson
+      packageJsonPath = packageJsonInfo.packageJsonPath
+      voerkai18n = packageJson?.voerkai18n || {
+        entry: "languages"
+      }
+      dependencies = packageJson?.dependencies || {}
+    }
 
     //----------------------------------------------------------------------
     // Helpers
@@ -71,15 +115,6 @@ module.exports = {
             functionImported = true
           }
         },
-        // Program: async function () {
-        //   if (rootDir) {
-        //     if (allPackageJsonInfo.length === 0) {
-        //       // 获取所有 package.json 文件的路径
-        //       allPackageJsonInfo = await getAllPackageJsonInfo(rootDir);
-        //       console.log('Found package.json files:', allPackageJsonInfo.length, typeof allPackageJsonInfo);
-        //     }
-        //   }
-        // },
       }
     }
 
@@ -95,15 +130,25 @@ module.exports = {
             node,
             messageId: 'unimport',
             fix(fixer) {
-              // 输出所有找到的 package.json 路径
-              // console.log('exit Found package.json files:', allPackageJsonInfo.length, typeof allPackageJsonInfo);
-              // allPackageJsonInfo.forEach((filePath) => {
-              //   console.log(filePath);
-              // });
+              // 用户voerkai18n配置，前后不带 '/'
+              let entry = voerkai18n.entry ? 'languages' : voerkai18n.entry
+              let sourcePath = `${srcAlias}/${entry}${pathSuffix}`
+              if (auto && dependencies?.["@voerkai18n/runtime"]) {
+                let entityEntry = `${entry}${pathSuffix}`
+                let result = getRelativePathTolanguagePath(filename, `${path.dirname(packageJsonPath)}/src/${entityEntry}`)
+                if (result) {
+                  if (!sourcePath.startsWith('.') && !sourcePath.startsWith('/')) {
+                    // 如果路径不是相对路径，则添加./
+                    sourcePath = `./${sourcePath}`
+                  }
+                }
+              }
+              // 删除后缀ts
+              sourcePath = sourcePath.replace(/\.ts$/, '')
               if (node.tokens.length === 0) {
-                return fixer.insertTextBefore(node, `<script setup>import { t } from "@/entry/languages/useLanguage";</script>`)
+                return fixer.insertTextAfter(node, `<script setup>import { t } from "${sourcePath}";</script>`)
               } else {
-                return fixer.insertTextBefore(node, `import { t } from "@/entry/languages/useLanguage";`)
+                return fixer.insertTextBefore(node, `import { t } from "${sourcePath}";\n`)
               }
 
             },

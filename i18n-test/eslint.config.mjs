@@ -17,7 +17,8 @@ export default tseslint.config(
   /** vue推荐配置 */
   ...eslintPluginVue.configs['flat/recommended'],
 
-  i18nWrap.configs.recommended,
+  // i18nWrap.configs.recommended,
+  i18nWrap.configs.all,
 
   /**
    * javascript 规则
