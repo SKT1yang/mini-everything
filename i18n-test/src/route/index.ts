@@ -1,7 +1,7 @@
-import { t } from "../languages/useLanguage";
 import { createRouter, createWebHashHistory } from 'vue-router';
 
-const name =t('中文');
+// eslint-disable-next-line i18n/wrap-i18n-function
+const name = "中文";
 const routes = [
   {
     path: '/',

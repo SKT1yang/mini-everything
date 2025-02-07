@@ -9,7 +9,7 @@
     <FloatButtonGroup shape="circle">
       <FloatButton @click="handleSwitchTranlate()">
         <template #icon>
-          <i class="i-base-translate"></i>
+          <i class="i-base-translate" />
         </template>
       </FloatButton>
     </FloatButtonGroup>

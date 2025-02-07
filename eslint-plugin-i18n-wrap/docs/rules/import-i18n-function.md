@@ -1,4 +1,8 @@
-# 自动导入国际化包裹函数 (`import-i18n-function`)
+# 自动导入国际化包裹函数 (`i18n-wrap/import-i18n-function`)
+
+🔧 This rule is automatically fixable by the [`--fix` CLI option](https://eslint.org/docs/latest/user-guide/command-line-interface#--fix).
+
+<!-- end auto-generated rule header -->
 
 Please describe the origin of the rule here.
 
@@ -25,6 +29,31 @@ Examples of **correct** code for this rule:
 ### Options
 
 If there are any options, describe them here. Otherwise, delete this section.
+
+```js
+
+  auto: {
+    type: 'boolean',
+    default: false, // 默认值
+    description: '是否自动导入国际化包裹函数',
+  },
+  pathSuffix: {
+    type: 'string',
+    default: DEFAULT_PATH_SUFFIX, // 默认值
+    description: '国际化包裹函数的路径后缀',
+  },
+  srcAlias: {
+    type: 'string',
+    default: DEFAULT_SRC_ALIAS, // 默认值
+    description: '源代码的别名',
+  },
+  staticEntry: {
+    type: 'string',
+    default: DEFAULT_STATIC_ENTRY, // 默认值
+    description: '静态资源的入口文件',
+  },
+
+```
 
 ## When Not To Use It
 

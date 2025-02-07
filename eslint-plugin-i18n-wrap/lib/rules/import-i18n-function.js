@@ -9,6 +9,7 @@ const { findNearestPackageJson, getRelativePathTolanguagePath } = require("../ut
 
 const DEFAULT_PATH_SUFFIX = ''
 const DEFAULT_SRC_ALIAS = '@'
+const DEFAULT_STATIC_ENTRY = 'languages'
 
 //------------------------------------------------------------------------------
 // Rule Definition
@@ -41,6 +42,10 @@ module.exports = {
             type: 'string',
             default: DEFAULT_SRC_ALIAS, // 默认值
           },
+          staticEntry: {
+            type: 'string',
+            default: DEFAULT_STATIC_ENTRY, // 默认值
+          },
         },
         additionalProperties: false,
       },
@@ -62,6 +67,7 @@ module.exports = {
     const auto = options.auto || false;
     const pathSuffix = options.pathSuffix || DEFAULT_PATH_SUFFIX;
     const srcAlias = options.srcAlias || DEFAULT_SRC_ALIAS;
+    const staticEntry = options.staticEntry || DEFAULT_STATIC_ENTRY;
 
     let needImportFunction = false
     let functionImported = false
@@ -70,7 +76,7 @@ module.exports = {
     let packageJsonPath = ""
     /** @type {{entry: string} }*/
     let voerkai18n = {
-      entry: "languages"
+      entry: ''
     }
     /** @type {{'@voerkai18n/runtime'?: string} }*/
     let dependencies = {}
@@ -80,7 +86,7 @@ module.exports = {
       packageJson = packageJsonInfo.packageJson
       packageJsonPath = packageJsonInfo.packageJsonPath
       voerkai18n = packageJson?.voerkai18n || {
-        entry: "languages"
+        entry: DEFAULT_STATIC_ENTRY
       }
       dependencies = packageJson?.dependencies || {}
     }
@@ -126,33 +132,47 @@ module.exports = {
       "Program:exit"(node) {
         // console.log("Program:exit", needImportFunction, functionImported)
         if (needImportFunction && !functionImported) {
-          context.report({
-            node,
-            messageId: 'unimport',
-            fix(fixer) {
-              // 用户voerkai18n配置，前后不带 '/'
-              let entry = voerkai18n.entry ? voerkai18n.entry : 'languages'
-              let sourcePath = `${srcAlias}/${entry}${pathSuffix}`
-              if (auto && dependencies?.["@voerkai18n/runtime"]) {
-                let entityEntry = `${entry}${pathSuffix}`
-                let result = getRelativePathTolanguagePath(filename, `${path.dirname(packageJsonPath)}/src/${entityEntry}`)
-                if (result) {
-                  if (!result.startsWith('.') && !result.startsWith('/') && !result.startsWith(srcAlias)) {
-                    // 如果路径不是相对路径，则添加./
-                    sourcePath = `./${result}`
+          if (auto && dependencies?.["@voerkai18n/runtime"]) {
+            // 用户voerkai18n配置，前后不带 '/'
+            let entry = voerkai18n.entry ? voerkai18n.entry : staticEntry
+            let entryEntity = `${entry}${pathSuffix}`
+            let result = getRelativePathTolanguagePath(filename, `${path.dirname(packageJsonPath)}/src/${entryEntity}`)
+            if (result) {
+              let sourcePath = result.replace(/\.ts$/, '')
+              if (!sourcePath.startsWith('.') && !sourcePath.startsWith('/')) {
+                // 如果路径不是相对路径，则添加./
+                sourcePath = `./${sourcePath}`
+              }
+              context.report({
+                node,
+                messageId: 'unimport',
+                fix(fixer) {
+                  if (node.tokens.length === 0) {
+                    return fixer.insertTextAfter(node, `<script setup>import { t } from "${sourcePath}";</script>`)
+                  } else {
+                    return fixer.insertTextBefore(node, `import { t } from "${sourcePath}";\n`)
                   }
-                }
-              }
-              // 删除后缀ts
-              sourcePath = sourcePath.replace(/\.ts$/, '')
-              if (node.tokens.length === 0) {
-                return fixer.insertTextAfter(node, `<script setup>import { t } from "${sourcePath}";</script>`)
-              } else {
-                return fixer.insertTextBefore(node, `import { t } from "${sourcePath}";\n`)
-              }
+                },
+              })
+            }
 
-            },
-          })
+          } else {
+            // 不知道任何信息，固定source
+            context.report({
+              node,
+              messageId: 'unimport',
+              fix(fixer) {
+                let sourcePath = `${srcAlias}/${staticEntry}${pathSuffix}`
+                // 删除后缀ts
+                sourcePath = sourcePath.replace(/\.ts$/, '')
+                if (node.tokens.length === 0) {
+                  return fixer.insertTextAfter(node, `<script setup>import { t } from "${sourcePath}";</script>`)
+                } else {
+                  return fixer.insertTextBefore(node, `import { t } from "${sourcePath}";\n`)
+                }
+              },
+            })
+          }
         }
       }
     });

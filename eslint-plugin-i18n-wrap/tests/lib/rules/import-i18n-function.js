@@ -45,12 +45,22 @@ ruleTester.run("import-i18n-function", rule, {
   ],
 
   invalid: [
+    // 默认引入结果
     {
       filename: 'test.js',
       code: "const name = t('中文');",
       output: `import { t } from "@/languages";\nconst name = t('中文');`,
       errors: [{ messageId: "unimport" }],
     },
+    // 默认引入结果
+    {
+      filename: 'test.js',
+      code: "const name = t('中文');",
+      output: `import { t } from "#/languages";\nconst name = t('中文');`,
+      errors: [{ messageId: "unimport" }],
+      options: [{ srcAlias: '#' }],
+    },
+    // 路径后缀
     {
       filename: 'test.js',
       code: "const name = t('中文');",
@@ -58,6 +68,15 @@ ruleTester.run("import-i18n-function", rule, {
       errors: [{ messageId: "unimport" }],
       options: [{ pathSuffix: '/useLanguage.ts' }],
     },
+    // 静态entry + 路径后缀
+    {
+      filename: 'test.js',
+      code: "const name = t('中文');",
+      output: `import { t } from "@/entry/languages/useLanguage";\nconst name = t('中文');`,
+      errors: [{ messageId: "unimport" }],
+      options: [{ staticEntry: 'entry/languages', pathSuffix: '/useLanguage.ts' }],
+    },
+    // 自动引入 + 路径后缀
     {
       filename: 'test.js',
       code: "const name = t('中文');",
